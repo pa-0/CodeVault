@@ -18,19 +18,29 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(wxWidgets)
 
-set(SRCS main.cpp)
+set(SRCS App.cpp
+        App.cpp
+        App.h
+        MainFrame.cpp
+        MainFrame.cpp)
 
 if(APPLE)
     # create bundle on apple compiles
-    add_executable(main MACOSX_BUNDLE ${SRCS})
+    add_executable(App MACOSX_BUNDLE ${SRCS}
+            App.h
+            MainFrame.cpp
+            MainFrame.cpp)
 
     # Set a custom plist file for the app bundle - needed for Mac OS Retina display
-    set_target_properties(main PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)
+    set_target_properties(App PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)
 else()
     # the WIN32 is needed for Windows in order for it to look for WinMain
     # instead of the main function. This is ignored on other systems,
     # so it works on all platforms
-    add_executable(main WIN32 ${SRCS} main.exe.manifest)
+    add_executable(App WIN32 ${SRCS} main.exe.manifest
+            App.h
+            MainFrame.cpp
+            MainFrame.cpp)
 endif()
 
-target_link_libraries(main PRIVATE wxcore wxnet)
+target_link_libraries(App PRIVATE wxcore wxnet)
