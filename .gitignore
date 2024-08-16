@@ -1,3 +1,5 @@
 /x64
 /CodeVault/x64
 .vs/
+/CodeVault/build
+.DS_Store
