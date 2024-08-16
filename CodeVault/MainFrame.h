@@ -13,12 +13,14 @@ private:
 
 
 	wxPanel* panel;
+	wxButton* closeSideBarBtn;
 	wxButton* addSinppetBtn;
 	wxButton* groupsBtn;
 	wxButton* favoritesBtn;
 	wxButton* profileBtn;
 	wxButton* logoutBtn;
-	wxTextCtrl* CodeSearchBar;
+	wxTextCtrl* codeSearchBar;
+
 
 
 };
