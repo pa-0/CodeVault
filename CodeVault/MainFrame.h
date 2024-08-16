@@ -10,6 +10,7 @@ public:
 private:
 	void SetupSizer();
 	void CreateControls();
+	void OnIdentifyLanguage(wxCommandEvent& event);
 
 
 	wxPanel* panel;
@@ -21,7 +22,11 @@ private:
 	wxButton* logoutBtn;
 	wxTextCtrl* codeSearchBar;
 
-
+	// New controls for code snippet language identification.
+	// TODO: Cleanup and use proper wxWidgets controls
+    wxTextCtrl* codeSnippetInput;
+    wxStaticText* languageLabel;
+    wxButton* identifyLanguageBtn;
 
 };
 

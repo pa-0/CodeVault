@@ -1,5 +1,10 @@
 #include "MainFrame.h"
 #include <wx/wx.h>
+#include <iostream>
+#include <map>
+#include <vector>
+#include <string>
+#include <algorithm>
 
 MainFrame::MainFrame(const wxString& title) :wxFrame(nullptr,wxID_ANY,title) {
 
@@ -29,6 +34,11 @@ void MainFrame::SetupSizer(){
 
 	codeViewVerticalSizer->Add(codeSearchBarSizer,wxSizerFlags().Expand());
 
+	// TODO: Cleanup and use proper wxWidgets controls
+    codeViewVerticalSizer->Add(codeSnippetInput, wxSizerFlags().Proportion(1).Expand().Border(wxALL, 10));
+    codeViewVerticalSizer->Add(languageLabel, wxSizerFlags().Expand().Border(wxALL, 10));
+    codeViewVerticalSizer->Add(identifyLanguageBtn, wxSizerFlags().Center().Border(wxALL, 10));
+
 	panel->SetSizer(primaryHorizontalSizer);
 	primaryHorizontalSizer->SetSizeHints(this);
 }
@@ -51,5 +61,63 @@ void MainFrame::CreateControls()
 	profileBtn = new wxButton(panel, wxID_ANY, "Profile");
 	logoutBtn = new wxButton(panel, wxID_ANY, "Logout");
 	
+	// TODO: Cleanup and use proper wxWidgets controls
+    codeSnippetInput = new wxTextCtrl(panel, wxID_ANY, "Enter code snippet here...", wxDefaultPosition, wxSize(400, 200), wxTE_MULTILINE);
+    languageLabel = new wxStaticText(panel, wxID_ANY, "Likely Language: Unknown", wxDefaultPosition, wxDefaultSize);
+    identifyLanguageBtn = new wxButton(panel, wxID_ANY, "Identify Language");
 
+    identifyLanguageBtn->Bind(wxEVT_BUTTON, &MainFrame::OnIdentifyLanguage, this);
+}
+
+/**
+ * Check if the snippet contains any of the language's patterns
+ *
+ * @param code code snippet to check
+ * @param patterns list of patterns to match
+ * @return number of matches found
+ */
+int matchPatterns(const std::string& code, const std::vector<std::string>& patterns) {
+    int matches = 0;
+    for (const auto& pattern : patterns) {
+        if (code.find(pattern) != std::string::npos) {
+            matches++;
+        }
+    }
+    return matches;
+}
+
+/**
+ * Identify the likely programming language of given code snippet
+ *
+ * The likelyhood of a language is determined by the number of patterns
+ * found in the code snippet.
+ * 
+ * @param code code snippet to analyze
+ * @return name of the most likely programming language
+ */
+std::string identifyLanguage(const std::string& code) {
+    // TODO: store patterns in an external file or database
+    std::map<std::string, std::vector<std::string>> languagePatterns;
+    languagePatterns["Python"] = {"def ", "import ", "self", ":", "#"};
+    languagePatterns["C++"] = {"#include", "int ", "::", "->", "#define"};
+    languagePatterns["JavaScript"] = {"function", "const", "let", "var", "=>"};
+
+    std::string likelyLanguage = "Unknown";
+    int maxMatches = 0;
+
+    // Compare code snippet with each language's patterns
+    for (const auto& language : languagePatterns) {
+        int matches = matchPatterns(code, language.second);
+        if (matches > maxMatches) {
+            maxMatches = matches;
+            likelyLanguage = language.first;
+        }
+    }
+    return likelyLanguage;
+}
+
+void MainFrame::OnIdentifyLanguage(wxCommandEvent& event) {
+    std::string codeSnippet = std::string(codeSnippetInput->GetValue().mb_str());
+    std::string likelyLanguage = identifyLanguage(codeSnippet);
+    languageLabel->SetLabel("Likely Language: " + likelyLanguage);
 }
