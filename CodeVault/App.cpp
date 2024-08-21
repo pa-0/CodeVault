@@ -1,12 +1,12 @@
 #include "App.h"
-#include "MainFrame.h"
+#include "LoginFrame.h"
 #include <wx/wx.h>
 
 wxIMPLEMENT_APP(App);
 
 bool App::OnInit() {
-	MainFrame* mainFrame = new MainFrame("C++ GUI");
-	mainFrame->SetClientSize(800, 600);
-	mainFrame->Show();
-	return true;
+    LoginFrame* loginFrame = new LoginFrame("Code Vault");
+    loginFrame->SetClientSize(400, 300);
+    loginFrame->Show();
+    return true;
 }
