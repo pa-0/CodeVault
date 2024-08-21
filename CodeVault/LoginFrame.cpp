@@ -1,9 +1,10 @@
 #include "LoginFrame.h"
 #include "MainFrame.h"
+#include "App.h"
 #include "SignUpFrame.h"
 
 LoginFrame::LoginFrame(const wxString& title)
-    : wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxSize(400, 400))
+    : wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition)
 {
     SetBackgroundColour(wxColour(15, 58, 102));
     CreateControls();
@@ -58,15 +59,20 @@ void LoginFrame::CreateControls()
 
 void LoginFrame::OnLogin(wxCommandEvent& event)
 {
-    MainFrame* mainFrame = new MainFrame("C++ GUI");
-    mainFrame->SetClientSize(1200, 800);
-    mainFrame->Show();
-    this->Close();
+    this->Hide();
+    MainFrame* mainFrame = App::GetMainFrame();
+    if (mainFrame)
+    {
+        mainFrame->Show();
+    }
 }
 
 void LoginFrame::OnSignUp(wxHyperlinkEvent& event)
 {
-    SignUpFrame* signUpFrame = new SignUpFrame("Sign Up");
-    signUpFrame->Show();
-    this->Close();
+    this->Hide();
+	SignUpFrame* signUpFrame = App::GetSignUpFrame();
+    if (signUpFrame)
+	{
+		signUpFrame->Show();
+	}
 }
