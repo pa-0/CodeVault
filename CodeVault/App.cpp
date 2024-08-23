@@ -9,6 +9,7 @@ bool App::OnInit() {
 	mainFrame->SetClientSize(1200, 800);
 	mainFrame->SetMinSize(wxSize(800,600));
 	wxImage::AddHandler(new wxPNGHandler);
+	mainFrame->CenterOnScreen();
 	mainFrame->Show();
 	return true;
 }
