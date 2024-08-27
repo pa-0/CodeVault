@@ -3,19 +3,42 @@
 #include <wx/bitmap.h>
 #include "CVGradientPanel.h"
 #include "CVCustomControls.h"
+#include"MySQLConnectionManager.h"
 
 
-
-
-
-
-
-
-MainFrame::MainFrame(const wxString& title) :wxFrame(nullptr, wxID_ANY, title) {
+MainFrame::MainFrame(const wxString& title, std::unique_ptr<MySQLConnectionManager> MySQLManager) :
+	wxFrame(nullptr, wxID_ANY, title), 
+	m_MySQLConnectionManager(std::move(MySQLManager)){
 
 
 	SetupSizer();
 	CreateControls();
+
+
+	
+
+		auto stmt = m_MySQLConnectionManager.get()->createStatement();
+		stmt->execute("DROP TABLE IF EXISTS inventory");
+		std::cout << "Finished dropping table (if existed)" << std::endl;
+		stmt->execute("CREATE TABLE inventory (id serial PRIMARY KEY, name VARCHAR(50), quantity INTEGER);");
+		std::cout << "Finished creating table" << std::endl;
+
+		auto pstmt = m_MySQLConnectionManager.get()->prepareStatement("INSERT INTO inventory(name, quantity) VALUES(?,?)");
+		pstmt->setString(1, "banana");
+		pstmt->setInt(2, 150);
+		pstmt->execute();
+		std::cout << "One row inserted." << std::endl;
+
+		pstmt->setString(1, "orange");
+		pstmt->setInt(2, 154);
+		pstmt->execute();
+		std::cout << "One row inserted." << std::endl;
+
+		pstmt->setString(1, "apple");
+		pstmt->setInt(2, 100);
+		pstmt->execute();
+		std::cout << "One row inserted." << std::endl;
+
 
 
 
@@ -220,6 +243,7 @@ void MainFrame::SetupSidePanelUI()
 	addSnippetBtn->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
 		
 		//vaultViewPanel->Disable();
+		std::cout << "Add Snippet Button Clicked" << std::endl;
 		vaultViewPanel->Hide();
 		snippetFormPanel->Show();
 		Layout();
@@ -287,7 +311,6 @@ void MainFrame::BindSidePanelButtonEvents(const std::vector<wxButton*>& sidePane
 		// Capture the controlSet by value so that each lambda has its own copy
 		
 		button->Bind(wxEVT_LEAVE_WINDOW, [button,this](wxMouseEvent& event) mutable {
-			std::cout << "Button text hovered!" << std::endl;
 			button->SetBackgroundColour(sidePanelColor); // Original color
 			button->Refresh();
 			event.Skip();
@@ -429,7 +452,7 @@ void MainFrame::SetSnippetFormUI()
 	codeBlockLabel->SetForegroundColour(*wxWHITE);
 	codeBlockLabel->SetFont(sidePanelButtonfont);
 
-	codeBlockInput = new wxTextCtrl(snippetFormPanel, wxID_ANY, "", wxDefaultPosition, wxSize(-1, 400), wxTE_PROCESS_ENTER | wxTE_MULTILINE);
+	codeBlockInput = new wxTextCtrl(snippetFormPanel, wxID_ANY, "", wxDefaultPosition, wxSize(-1, 360), wxTE_PROCESS_ENTER | wxTE_MULTILINE);
 	codeBlockInput->SetBackgroundColour(vaultViewColor);
 	codeBlockInput->SetForegroundColour(*wxWHITE);
 	codeBlockInput->SetFont(sidePanelButtonfont);
@@ -475,6 +498,11 @@ void MainFrame::SetSnippetFormUI()
 	languagesChoice = new wxChoice(snippetFormPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 30), languageList);
 
 
+	addCodeSnipBtn = new wxButton(snippetFormPanel, wxID_ANY,"Add Snippet", wxDefaultPosition, wxSize(-1,60));
+	addCodeSnipBtn->SetBackgroundColour(vaultViewColor);
+	addCodeSnipBtn->SetFont(sidePanelButtonfont);
+	addCodeSnipBtn->SetForegroundColour(*wxWHITE);
+
 
 
 	snippetNameSizer_H->Add(snippetNameLabel, 1, wxEXPAND |wxTOP , 5);
@@ -493,6 +521,21 @@ void MainFrame::SetSnippetFormUI()
 
 	tagsandLanguageSizer_H->Add(tagSelectionComboCtrl, 1, wxEXPAND | wxTOP | wxLEFT |wxBOTTOM, 5);
 	tagsandLanguageSizer_H->Add(languagesChoice, 1, wxEXPAND | wxTOP |wxLEFT, 5);
+
+	snippetFormPanelSizer_V->Add(addCodeSnipBtn, 0, wxEXPAND | wxBOTTOM, 10);
+
+
+
+
+	addCodeSnipBtn->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+
+		//vaultViewPanel->Disable();
+		std::cout << "Add Snippet Form Submit Clicked" << std::endl;
+		wxString snipNameVal =  snippetNameInput->GetValue();
+		std::cout << snipNameVal << std::endl;
+
+
+		});
 
 
 }

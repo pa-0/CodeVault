@@ -11,12 +11,13 @@
 class CVGradientPanel;
 class CVGradientTxtCtrl;
 class wxComboCtrl;
+class MySQLConnectionManager;
 
 
 class MainFrame : public wxFrame
 {
 public:
-	MainFrame(const wxString& title);
+	MainFrame(const wxString& title, std::unique_ptr<MySQLConnectionManager> MySQLManager);
 
 
 private:
@@ -33,6 +34,7 @@ private:
 	std::vector<wxButton*> sidePanelButtons;
 	std::vector<wxBitmapButton*> languageButtons;
 	wxArrayString languageList;
+	std::unique_ptr<MySQLConnectionManager>m_MySQLConnectionManager;
 
 
 
@@ -76,6 +78,7 @@ private:
 
 
 
+
 	//Scrolview
 	wxScrolledWindow* tagsWindow;
 
@@ -90,6 +93,7 @@ private:
 	wxButton* profileBtn;
 	wxButton* logoutBtn;
 	wxButton* tagsBtn;
+
 
 		//VaultViewControls
 	CVGradientTxtCtrl* codeSearchBar;
@@ -106,6 +110,7 @@ private:
 	wxTextCtrl* snippetDescInput;
 	wxComboCtrl* tagSelectionComboCtrl;
 	wxChoice* languagesChoice;
+	wxButton* addCodeSnipBtn;
 
 	
 	//Colors
