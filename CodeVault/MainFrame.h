@@ -13,6 +13,10 @@ class CVGradientTxtCtrl;
 class wxComboCtrl;
 class MySQLConnectionManager;
 
+namespace sql {
+	class PreparedStatement;
+}
+
 
 class MainFrame : public wxFrame
 {
@@ -30,11 +34,16 @@ private:
 	void SetVaultViewUI();
 	void SetSnippetFormUI();
 
+	//Data Functions
+	void OnAddSnippetSubmit(wxCommandEvent& event);
+
+
 	//Data Variables
 	std::vector<wxButton*> sidePanelButtons;
 	std::vector<wxBitmapButton*> languageButtons;
 	wxArrayString languageList;
 	std::unique_ptr<MySQLConnectionManager>m_MySQLConnectionManager;
+	std::vector<int> addedTagsList;
 
 
 
@@ -126,5 +135,11 @@ private:
 	wxColor vaultButtonsOnHoverColor = wxColor(38,37,50);
 	//fonts
 	wxFont sidePanelButtonfont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
+
+
+	//SQL Quries
+	std::unique_ptr<sql::PreparedStatement>  insertCodeBlockpstmt = nullptr;
+	std::unique_ptr<sql::PreparedStatement>  insertSnippetTagpstmt = nullptr;
+	std::unique_ptr<sql::PreparedStatement>  retrieveTagidForTagpstmt = nullptr;
 };
 

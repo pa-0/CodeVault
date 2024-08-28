@@ -46,11 +46,11 @@ bool App::InitializeDatabaseManager(std::unique_ptr<MySQLConnectionManager>& dbM
 	}
 
 	const std::string password = password_env; // Convert to std::string if valid
-	const std::string schema = "quickstartdb";
+	
 
 	try {
 		dbManager = std::make_unique<MySQLConnectionManager>(m_server, m_username, password);
-		dbManager->setSchema(schema);
+		dbManager->setSchema(m_schema);
 	}
 	catch (sql::SQLException& e) {
 		std::cerr << "Database error: " << e.what() << std::endl;

@@ -123,12 +123,16 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>STATIC_CONCPP;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files\MySQL\mysql-connector-c++-9.0.0-debug\include\jdbc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Program Files\MySQL\mysql-connector-c++-9.0.0-debug\lib64\debug\vs14;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>mysqlcppconn-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableDpiAwareness>true</EnableDpiAwareness>

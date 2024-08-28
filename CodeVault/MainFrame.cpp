@@ -17,27 +17,27 @@ MainFrame::MainFrame(const wxString& title, std::unique_ptr<MySQLConnectionManag
 
 	
 
-		auto stmt = m_MySQLConnectionManager.get()->createStatement();
-		stmt->execute("DROP TABLE IF EXISTS inventory");
-		std::cout << "Finished dropping table (if existed)" << std::endl;
-		stmt->execute("CREATE TABLE inventory (id serial PRIMARY KEY, name VARCHAR(50), quantity INTEGER);");
-		std::cout << "Finished creating table" << std::endl;
+		//auto stmt = m_MySQLConnectionManager.get()->createStatement();
+		//stmt->execute("DROP TABLE IF EXISTS inventory");
+		//std::cout << "Finished dropping table (if existed)" << std::endl;
+		//stmt->execute("CREATE TABLE inventory (id serial PRIMARY KEY, name VARCHAR(50), quantity INTEGER);");
+		//std::cout << "Finished creating table" << std::endl;
 
-		auto pstmt = m_MySQLConnectionManager.get()->prepareStatement("INSERT INTO inventory(name, quantity) VALUES(?,?)");
-		pstmt->setString(1, "banana");
-		pstmt->setInt(2, 150);
-		pstmt->execute();
-		std::cout << "One row inserted." << std::endl;
+		//auto pstmt = m_MySQLConnectionManager.get()->prepareStatement("INSERT INTO inventory(name, quantity) VALUES(?,?)");
+		//pstmt->setString(1, "banana");
+		//pstmt->setInt(2, 150);
+		//pstmt->execute();
+		//std::cout << "One row inserted." << std::endl;
 
-		pstmt->setString(1, "orange");
-		pstmt->setInt(2, 154);
-		pstmt->execute();
-		std::cout << "One row inserted." << std::endl;
+		//pstmt->setString(1, "orange");
+		//pstmt->setInt(2, 154);
+		//pstmt->execute();
+		//std::cout << "One row inserted." << std::endl;
 
-		pstmt->setString(1, "apple");
-		pstmt->setInt(2, 100);
-		pstmt->execute();
-		std::cout << "One row inserted." << std::endl;
+		//pstmt->setString(1, "apple");
+		//pstmt->setInt(2, 100);
+		//pstmt->execute();
+		//std::cout << "One row inserted." << std::endl;
 
 
 
@@ -467,7 +467,7 @@ void MainFrame::SetSnippetFormUI()
 	snippetDescInput->SetForegroundColour(*wxWHITE);
 	snippetDescInput->SetFont(sidePanelButtonfont);
 
-	wxStaticText* TagsLabel = new wxStaticText(snippetFormPanel, wxID_ANY, "Tags", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
+	wxStaticText* TagsLabel = new wxStaticText(snippetFormPanel, wxID_ANY, "Tags :", wxDefaultPosition, wxDefaultSize,wxALIGN_LEFT);
 	TagsLabel->SetBackgroundColour(vaultViewColor);
 	TagsLabel->SetForegroundColour(*wxWHITE);
 	TagsLabel->SetFont(sidePanelButtonfont);
@@ -477,23 +477,85 @@ void MainFrame::SetSnippetFormUI()
 	LanguageLabel->SetForegroundColour(*wxWHITE);
 	LanguageLabel->SetFont(sidePanelButtonfont);
 
-	tagSelectionComboCtrl = new wxComboCtrl(snippetFormPanel, wxID_ANY, wxEmptyString,wxDefaultPosition,wxSize(-1,20));
+	tagSelectionComboCtrl = new wxComboCtrl(snippetFormPanel, wxID_ANY, wxEmptyString,wxDefaultPosition,wxSize(-1,20), wxTE_PROCESS_ENTER);
 
 	wxListViewComboPopup* tagSelectpopupCtrl = new wxListViewComboPopup();
 
+
+	retrieveTagidForTagpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+		"SELECT tag_id FROM tags WHERE tag_name = ?"));
+
+	tagSelectionComboCtrl->Bind(wxEVT_TEXT_ENTER, [this,TagsLabel](wxCommandEvent& event) {
+
+		wxString val = tagSelectionComboCtrl->GetValue();
+		std::string stdString = std::string(val.mb_str());
+		try {
+			retrieveTagidForTagpstmt->setString(1, stdString);
+			std::unique_ptr<sql::ResultSet> res(retrieveTagidForTagpstmt->executeQuery());
+			if (res->next()) {  // Check if a result was returned
+				int tagId = res->getInt("tag_id");  // Retrieve tag_id as an int
+				std::cout <<"AddedTag: "<< stdString << " TagID:"<<tagId << std::endl;
+				addedTagsList.push_back(tagId);
+			}
+			else {
+				std::cout << "Tag 'OPENGL' not found." << std::endl;
+			}
+
+
+		}
+		catch (sql::SQLException& e) {
+			std::cerr << "SQL error: " << e.what() << std::endl;
+			return;
+		}
+
+		
+		std::cout << "Combo Control Pressed" << std::endl;
+		std::cout << val<< std::endl;
+		TagsLabel->SetLabelText(TagsLabel->GetLabelText() +", " + val);
+	});
+
+
+
 	// It is important to call SetPopupControl() as soon as possible
 	tagSelectionComboCtrl->SetPopupControl(tagSelectpopupCtrl);
+	tagSelectionComboCtrl->SetPopupMinWidth(100);
 
 	// Populate using wxListView methods
-	tagSelectpopupCtrl->InsertItem(tagSelectpopupCtrl->GetItemCount(), "First Item");
-	tagSelectpopupCtrl->InsertItem(tagSelectpopupCtrl->GetItemCount(), "Second Item");
-	tagSelectpopupCtrl->InsertItem(tagSelectpopupCtrl->GetItemCount(), "Third Item");
 
 
-	languageList.Add("Python");
-	languageList.Add("C");
-	languageList.Add("C#");
-	languageList.Add("C++");
+	try {
+		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager.get()->createStatement());
+		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT tag_name,tag_id FROM tags"));
+
+		while (res->next()) {
+			std::string tag = res->getString("tag_name");
+			int tagId = res->getUInt("tag_id");
+			tagSelectpopupCtrl->InsertItem(tagSelectpopupCtrl->GetItemCount(),tag);
+			std::cout << tagId << std::endl;
+		
+		}
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQL error: " << e.what() << std::endl;
+		return;
+	}
+
+	//Populate language Container
+
+	try {
+		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager.get()->createStatement());
+		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT language_name FROM languages"));
+
+		while (res->next()) {
+			std::string language = res->getString("language_name");
+			languageList.Add(language);
+		}
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQL error: " << e.what() << std::endl;
+		return;
+	}
+
 	
 	languagesChoice = new wxChoice(snippetFormPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 30), languageList);
 
@@ -527,17 +589,62 @@ void MainFrame::SetSnippetFormUI()
 
 
 
-	addCodeSnipBtn->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
-
-		//vaultViewPanel->Disable();
-		std::cout << "Add Snippet Form Submit Clicked" << std::endl;
-		wxString snipNameVal =  snippetNameInput->GetValue();
-		std::cout << snipNameVal << std::endl;
 
 
-		});
+	 insertCodeBlockpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+			"INSERT INTO code_snippets(snippet_name, snippet_data,snippet_description) VALUES(?,?,?)"));
+
+	 insertSnippetTagpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+		 "INSERT INTO snippet_tags(snippet_id,tag_id) VALUES(?,?)"));
+
+	 addCodeSnipBtn->Bind(wxEVT_BUTTON, &MainFrame::OnAddSnippetSubmit, this);
 
 
+
+
+}
+
+void MainFrame::OnAddSnippetSubmit(wxCommandEvent& event)
+{
+	std::string stdSnippetName = std::string(snippetNameInput->GetValue().mb_str());
+	std::string stdSnippetData = std::string(codeBlockInput->GetValue().mb_str());
+	std::string stdSnippetDesc = std::string(snippetDescInput->GetValue().mb_str());
+
+	insertCodeBlockpstmt->setString(1, sql::SQLString(stdSnippetName));
+	insertCodeBlockpstmt->setString(2, sql::SQLString(stdSnippetData));
+	insertCodeBlockpstmt->setString(3, sql::SQLString(stdSnippetDesc));
+
+	insertCodeBlockpstmt->execute();
+	std::cout << "One row inserted to code_snippets." << std::endl;
+	int lastSnippetId = 0;
+
+	try {
+		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager.get()->createStatement());
+		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT snippet_id FROM code_snippets ORDER BY snippet_id DESC LIMIT 1"));
+
+		if (res->next()) {
+			lastSnippetId = res->getInt("snippet_id");
+			std::cout << "Last snippet_id: " << lastSnippetId << std::endl;
+		}
+		else {
+			std::cout << "No snippets found." << std::endl;
+		}
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQL error: " << e.what() << std::endl;
+		return;
+	}
+	std::cout << "size of the addedtags list" << addedTagsList.size() << std::endl;
+	for (int tagID : addedTagsList)
+	{
+		insertSnippetTagpstmt->setInt(1, lastSnippetId);
+		insertSnippetTagpstmt->setInt(2, tagID);
+		insertSnippetTagpstmt->execute();
+	}
+
+	std::cout << "Add Snippet Form Submit Clicked" << std::endl;
+	wxString snipNameVal = snippetNameInput->GetValue();
+	std::cout << snipNameVal << std::endl;
 }
 
 
