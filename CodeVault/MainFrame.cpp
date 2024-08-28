@@ -592,7 +592,7 @@ void MainFrame::SetSnippetFormUI()
 
 
 	 insertCodeBlockpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
-			"INSERT INTO code_snippets(snippet_name, snippet_data,snippet_description) VALUES(?,?,?)"));
+			"INSERT INTO code_snippets(snippet_name, snippet_data,language_id,snippet_description) VALUES(?,?,?,?)"));
 
 	 insertSnippetTagpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
 		 "INSERT INTO snippet_tags(snippet_id,tag_id) VALUES(?,?)"));
@@ -606,13 +606,41 @@ void MainFrame::SetSnippetFormUI()
 
 void MainFrame::OnAddSnippetSubmit(wxCommandEvent& event)
 {
+
+	retrievelanguageidForGivenName = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+		"SELECT language_id FROM languages WHERE language_name = ?"));
+
+	wxString langval = languagesChoice->GetString(languagesChoice->GetSelection());
+	std::string stdlangval = std::string(langval.mb_str());
+	std::cout << stdlangval << std::endl;
+	int languageID = 0;
+
+	try
+	{
+		retrievelanguageidForGivenName->setString(1, stdlangval);
+		std::unique_ptr<sql::ResultSet> res(retrievelanguageidForGivenName->executeQuery());
+		if (res->next()) {
+			languageID = res->getInt("language_id");
+			std::cout << "Retrieved language_id Successfully" << std::endl;
+
+		}
+	}
+	catch (const std::exception&)
+	{
+
+	}
+
 	std::string stdSnippetName = std::string(snippetNameInput->GetValue().mb_str());
 	std::string stdSnippetData = std::string(codeBlockInput->GetValue().mb_str());
 	std::string stdSnippetDesc = std::string(snippetDescInput->GetValue().mb_str());
 
+
+
+
 	insertCodeBlockpstmt->setString(1, sql::SQLString(stdSnippetName));
 	insertCodeBlockpstmt->setString(2, sql::SQLString(stdSnippetData));
-	insertCodeBlockpstmt->setString(3, sql::SQLString(stdSnippetDesc));
+	insertCodeBlockpstmt->setInt(3, languageID);
+	insertCodeBlockpstmt->setString(4, sql::SQLString(stdSnippetDesc));
 
 	insertCodeBlockpstmt->execute();
 	std::cout << "One row inserted to code_snippets." << std::endl;

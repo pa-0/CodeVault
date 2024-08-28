@@ -141,5 +141,6 @@ private:
 	std::unique_ptr<sql::PreparedStatement>  insertCodeBlockpstmt = nullptr;
 	std::unique_ptr<sql::PreparedStatement>  insertSnippetTagpstmt = nullptr;
 	std::unique_ptr<sql::PreparedStatement>  retrieveTagidForTagpstmt = nullptr;
+	std::unique_ptr<sql::PreparedStatement>  retrievelanguageidForGivenName = nullptr;
 };
 
