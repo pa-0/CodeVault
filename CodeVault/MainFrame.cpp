@@ -1,9 +1,12 @@
 #include "MainFrame.h"
+#include <iostream>
+#include <string>
 #include <wx/wx.h>
 #include <wx/bitmap.h>
 #include "CVGradientPanel.h"
 #include "CVCustomControls.h"
 #include"MySQLConnectionManager.h"
+#include "CodeVaultDataStructs.h"
 
 
 MainFrame::MainFrame(const wxString& title, std::unique_ptr<MySQLConnectionManager> MySQLManager) :
@@ -13,34 +16,6 @@ MainFrame::MainFrame(const wxString& title, std::unique_ptr<MySQLConnectionManag
 
 	SetupSizer();
 	CreateControls();
-
-
-	
-
-		//auto stmt = m_MySQLConnectionManager.get()->createStatement();
-		//stmt->execute("DROP TABLE IF EXISTS inventory");
-		//std::cout << "Finished dropping table (if existed)" << std::endl;
-		//stmt->execute("CREATE TABLE inventory (id serial PRIMARY KEY, name VARCHAR(50), quantity INTEGER);");
-		//std::cout << "Finished creating table" << std::endl;
-
-		//auto pstmt = m_MySQLConnectionManager.get()->prepareStatement("INSERT INTO inventory(name, quantity) VALUES(?,?)");
-		//pstmt->setString(1, "banana");
-		//pstmt->setInt(2, 150);
-		//pstmt->execute();
-		//std::cout << "One row inserted." << std::endl;
-
-		//pstmt->setString(1, "orange");
-		//pstmt->setInt(2, 154);
-		//pstmt->execute();
-		//std::cout << "One row inserted." << std::endl;
-
-		//pstmt->setString(1, "apple");
-		//pstmt->setInt(2, 100);
-		//pstmt->execute();
-		//std::cout << "One row inserted." << std::endl;
-
-
-
 
 }
 
@@ -66,6 +41,7 @@ void MainFrame::SetupSizer() {
 	snippetFormPanel = new CVGradientPanel(this, wxID_ANY, wxDefaultPosition, wxSize(200, 100), vaultViewGradientStart, vaultViewGradientEnd, wxEAST);
 
 
+	snippetDisplayPanel = new CVGradientPanel(this, wxID_ANY, wxDefaultPosition, wxSize(200, 100), vaultViewGradientStart, vaultViewGradientEnd, wxEAST);
 
 	//Creating Sizers
 		//Primary Layout Sizers
@@ -93,6 +69,8 @@ void MainFrame::SetupSizer() {
 	tagsandLanguageSizer_H = new wxBoxSizer(wxHORIZONTAL);
 	tagsAndLanguageLabelsSizer_H = new wxBoxSizer(wxHORIZONTAL);
 
+		//Inside Language Sizers
+	snippetDisplaySizer_V = new wxBoxSizer(wxVERTICAL);
 
 
 	//Sizer Configurations
@@ -104,7 +82,9 @@ void MainFrame::SetupSizer() {
 	primaryVaultSizer_V->Add(topStripPanel, 1, wxEXPAND);
 	primaryVaultSizer_V->Add(vaultViewPanel, 9, wxEXPAND);
 	primaryVaultSizer_V->Add(snippetFormPanel, 9, wxEXPAND);
+	primaryVaultSizer_V->Add(snippetDisplayPanel, 9, wxEXPAND);
 	snippetFormPanel->Hide();
+	snippetDisplayPanel->Hide();
 
 	vaultViewPanel->SetSizerAndFit(secondaryVaultSizer_V);
 
@@ -125,9 +105,11 @@ void MainFrame::SetupSizer() {
 	snippetFormPanelSizer_V->Add(tagsAndLanguageLabelsSizer_H, 0, wxEXPAND | wxBOTTOM, 10);
 	snippetFormPanelSizer_V->Add(tagsandLanguageSizer_H, 0, wxEXPAND | wxBOTTOM, 10);
 
+	//
+
 	snippetFormPanel->SetSizerAndFit(snippetFormPanelSizer_V);
 
-
+	snippetDisplayPanel->SetSizerAndFit(snippetDisplaySizer_V);
 	
 
 	this->SetSizerAndFit(tier1Sizer_H);
@@ -347,6 +329,8 @@ void MainFrame::BindVaultLanguageButtonEvents(const std::vector<wxBitmapButton*>
 			event.Skip();
 			});
 
+	//	button->Bind(wxEVT_BUTTON, &MainFrame::OnLanguageButtonClicked, this);
+
 
 	}
 }
@@ -402,12 +386,18 @@ void MainFrame::SetVaultViewUI()
 
 
 
-	pythonVaultBtn = new wxBitmapButton(vaultViewPanel, wxID_ANY, scaledPythonBitmap, wxPoint(50, 50), buttonSize);
+
+	pythonVaultBtn = new wxBitmapButton(vaultViewPanel, static_cast<int>(ProgrammingLanguage::Python), scaledPythonBitmap, wxPoint(50, 50), buttonSize);
 	pythonVaultBtn->SetBackgroundColour(vaultButtonsColor);
 
 
-	cVaultBtn = new wxBitmapButton(vaultViewPanel, wxID_ANY, scaledCBitmap, wxPoint(50, 50), buttonSize);
+
+
+	cVaultBtn = new wxBitmapButton(vaultViewPanel, static_cast<int>(ProgrammingLanguage::C), scaledCBitmap, wxPoint(50, 50), buttonSize);
 	cVaultBtn->SetBackgroundColour(vaultButtonsColor);
+
+	currentLangEnumVal = getProgrammingLanguageFromIndex(1);
+	std::cout << "Language for enum id 1 is : " << programmingLanguageToString(currentLangEnumVal) << std::endl;
 
 	csharpVaultBtn = new wxBitmapButton(vaultViewPanel, wxID_ANY, scaledCSharpBitmap, wxPoint(50, 50), buttonSize);
 	csharpVaultBtn->SetBackgroundColour(vaultButtonsColor);
@@ -674,5 +664,9 @@ void MainFrame::OnAddSnippetSubmit(wxCommandEvent& event)
 	wxString snipNameVal = snippetNameInput->GetValue();
 	std::cout << snipNameVal << std::endl;
 }
+
+//void MainFrame::OnLanguageButtonClicked(wxCommandEvent& event, int wxID)
+//{
+//}
 
 

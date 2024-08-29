@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="CodeVaultDataStructs.h" />
     <ClInclude Include="CVCustomControls.h" />
     <ClInclude Include="CVGradientPanel.h" />
     <ClInclude Include="MainFrame.h" />

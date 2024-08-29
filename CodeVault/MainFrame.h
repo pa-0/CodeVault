@@ -5,6 +5,9 @@
 #include <wx/dcbuffer.h>
 #include <wx/scrolwin.h>
 #include <wx/wrapsizer.h>
+#include "CodeVaultDataStructs.h"
+
+
 
 
 //forward declarations
@@ -36,6 +39,7 @@ private:
 
 	//Data Functions
 	void OnAddSnippetSubmit(wxCommandEvent& event);
+	void OnLanguageButtonClicked(wxCommandEvent& event);
 
 
 	//Data Variables
@@ -44,7 +48,8 @@ private:
 	wxArrayString languageList;
 	std::unique_ptr<MySQLConnectionManager>m_MySQLConnectionManager;
 	std::vector<int> addedTagsList;
-
+	ProgrammingLanguage lang;
+	ProgrammingLanguage currentLangEnumVal;
 
 
 	//Panels
@@ -54,8 +59,11 @@ private:
 	CVGradientPanel* vaultViewPanel;
 	wxPanel* secondaryPanel;
 
-	//AddSnippet View
+		//AddSnippet View
 	CVGradientPanel* snippetFormPanel;
+		
+		//InsideLanguagePanel
+	CVGradientPanel* snippetDisplayPanel;
 
 	
 
@@ -84,7 +92,8 @@ private:
 	wxBoxSizer* tagsandLanguageSizer_H;
 	wxBoxSizer* tagsAndLanguageLabelsSizer_H;
 
-
+		//SnippetGroup Sizers
+	wxBoxSizer* snippetDisplaySizer_V;
 
 
 
