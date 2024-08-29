@@ -11,16 +11,16 @@ class App : public wxApp
 {
 public:;
 	bool OnInit();
-    static LoginFrame* GetLoginFrame() { return m_loginFrame; }
-    static MainFrame* GetMainFrame() { return m_mainFrame; }
-    static SignUpFrame* GetSignUpFrame() { return m_signUpFrame; }
 	void RedirectstdoutToConsole(bool bShouldSetConsoleRedirection);
 
+	void SetMainFrameVisibility(bool val);
+	void SetLoginFrameVisibility(bool val);
+	void SetSignupFrameVisibility(bool val);
 private:
 	bool InitializeDatabaseManager(std::unique_ptr<MySQLConnectionManager>& dbManager);
-    static LoginFrame* m_loginFrame;
-    static MainFrame* m_mainFrame;
-    static SignUpFrame* m_signUpFrame;
+    LoginFrame* m_loginFrame;
+    MainFrame* m_mainFrame;
+    SignUpFrame* m_signUpFrame;
 	const std::string m_server = "tcp://127.0.0.1:3306";
 	const std::string m_username = "root";
 	const std::string m_schema = "codevaultdb";

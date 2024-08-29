@@ -83,8 +83,8 @@ void SignUpFrame::OnRegister(wxCommandEvent& event)
 void SignUpFrame::OnLoginNow(wxHyperlinkEvent& event)
 {
     this->Hide();
-	LoginFrame* loginFrame = App::GetLoginFrame();
-    if (loginFrame) {
-        loginFrame->Show();
+    if (App* app = wxDynamicCast(wxApp::GetInstance(), App)) {
+        app->SetLoginFrameVisibility(true);
     }
+	
 }

@@ -8,10 +8,6 @@
 
 wxIMPLEMENT_APP(App);
 
-LoginFrame* App::m_loginFrame = nullptr;
-MainFrame* App::m_mainFrame = nullptr;
-SignUpFrame* App::m_signUpFrame = nullptr;
-
 bool App::OnInit() {
 	RedirectstdoutToConsole(true);
 	std::unique_ptr<MySQLConnectionManager>	dbmanager;
@@ -19,7 +15,6 @@ bool App::OnInit() {
 	if (!InitializeDatabaseManager(dbmanager)) {
 		return false; // Exit if the database initialization fails
 	}
-
 
     m_loginFrame = new LoginFrame("Code Vault");
     m_loginFrame->SetClientSize(400, 300);
@@ -32,12 +27,6 @@ bool App::OnInit() {
     m_signUpFrame = new SignUpFrame("Sign Up");
     m_signUpFrame->SetClientSize(400, 600);
 
-	// MainFrame* mainFrame = new MainFrame("C++ GUI",std::move(dbmanager));
-	// mainFrame->SetClientSize(1200, 800);
-	// mainFrame->SetMinSize(wxSize(800,600));
-	// wxImage::AddHandler(new wxPNGHandler);
-	// mainFrame->CenterOnScreen();
-	// mainFrame->Show();
 	return true;
 }
 
@@ -48,6 +37,8 @@ void App::RedirectstdoutToConsole(bool bShouldSetConsoleRedirection)
 	freopen("CONOUT$", "w", stdout); // Redirect stdout to the console
 	std::cout << "Console output enabled!" << std::endl;
 }
+
+
 
 bool App::InitializeDatabaseManager(std::unique_ptr<MySQLConnectionManager>& dbManager) {
 	
@@ -72,4 +63,37 @@ bool App::InitializeDatabaseManager(std::unique_ptr<MySQLConnectionManager>& dbM
 	}
 
 	return true;
+}
+
+void App::SetMainFrameVisibility(bool val)
+{
+	if (val) {
+		m_mainFrame->Show();
+		m_mainFrame->Center();
+	}
+	else {
+		m_mainFrame->Hide();
+	}
+	
+}
+
+void App::SetLoginFrameVisibility(bool val)
+{
+	if (val) {
+		m_loginFrame->Show();
+	}
+	else {
+		m_loginFrame->Hide();
+	}
+	
+}
+
+void App::SetSignupFrameVisibility(bool val)
+{
+	if (val) {
+		m_signUpFrame->Show();
+	}
+	else {
+		m_signUpFrame->Hide();
+	}
 }

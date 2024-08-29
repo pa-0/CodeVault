@@ -60,19 +60,27 @@ void LoginFrame::CreateControls()
 void LoginFrame::OnLogin(wxCommandEvent& event)
 {
     this->Hide();
-    MainFrame* mainFrame = App::GetMainFrame();
-    if (mainFrame)
-    {
-        mainFrame->Show();
+    //MainFrame* mainFrame = App::GetMainFrame();
+    //if (mainFrame)
+    //{
+    //    mainFrame->Show();
+    //}
+    if(App* app = wxDynamicCast(wxApp::GetInstance(), App)) {
+        app->SetMainFrameVisibility(true);
     }
+    
 }
 
 void LoginFrame::OnSignUp(wxHyperlinkEvent& event)
 {
     this->Hide();
-	SignUpFrame* signUpFrame = App::GetSignUpFrame();
-    if (signUpFrame)
-	{
-		signUpFrame->Show();
-	}
+	//SignUpFrame* signUpFrame = App::GetSignUpFrame();
+ //   if (signUpFrame)
+	//{
+	//	signUpFrame->Show();
+	//}
+    if (App* app = wxDynamicCast(wxApp::GetInstance(), App)) {
+        app->SetSignupFrameVisibility(true);
+    }
+    
 }
