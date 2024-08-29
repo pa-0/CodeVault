@@ -23,12 +23,16 @@
     <ClInclude Include="CodeVaultDataStructs.h" />
     <ClInclude Include="CVCustomControls.h" />
     <ClInclude Include="CVGradientPanel.h" />
+    <ClInclude Include="loginFrame.h" />
     <ClInclude Include="MainFrame.h" />
+    <ClInclude Include="SignUpFrame.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="LoginFrame.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="MySQLConnectionManager.h" />
+    <ClCompile Include="SignUpFrame.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

@@ -28,6 +28,10 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CodeVaultDataStructs.h">
+    <ClInclude Include="loginFrame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SignUpFrame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -40,6 +44,11 @@
     </ClCompile>
     <ClCompile Include="MySQLConnectionManager.h">
       <Filter>Header Files</Filter>
+    <ClCompile Include="LoginFrame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SignUpFrame.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
