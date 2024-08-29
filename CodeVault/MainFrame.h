@@ -21,10 +21,11 @@ namespace sql {
 }
 
 
+
 class MainFrame : public wxFrame
 {
 public:
-	MainFrame(const wxString& title, std::unique_ptr<MySQLConnectionManager> MySQLManager);
+	MainFrame(const wxString& title);
 
 
 private:
@@ -103,53 +104,17 @@ private:
 	//Controls
 		//SidePanel Controls
 
+
+	wxPanel* panel;
 	wxButton* closeSideBarBtn;
-	wxButton* addSnippetBtn;
-	
+	wxButton* addSinppetBtn;
 	wxButton* groupsBtn;
-	wxButton* favouritesBtn;
+	wxButton* favoritesBtn;
 	wxButton* profileBtn;
 	wxButton* logoutBtn;
-	wxButton* tagsBtn;
-
-
-		//VaultViewControls
-	CVGradientTxtCtrl* codeSearchBar;
-	wxBitmap* pythonImage;
-	wxBitmapButton* pythonVaultBtn;
-	wxBitmapButton*	cVaultBtn;
-	wxBitmapButton* csharpVaultBtn;
-	wxBitmapButton* cplusplusVaultBtn;
-
-		//SnippetFormControls
-	
-	wxTextCtrl* snippetNameInput;
-	wxTextCtrl* codeBlockInput;
-	wxTextCtrl* snippetDescInput;
-	wxComboCtrl* tagSelectionComboCtrl;
-	wxChoice* languagesChoice;
-	wxButton* addCodeSnipBtn;
-
-	
-	//Colors
-	wxColor sidePanelColor = wxColor(43, 52, 69);
-	wxColor sidePanelButtonHoverColor = wxColor(36, 34, 46);
+	wxTextCtrl* codeSearchBar;
 
 
 
-	wxColor vaultViewGradientStart = wxColor(47, 45, 61);
-	wxColor vaultViewGradientEnd = wxColour(56, 53, 72);
-	wxColor vaultViewColor = wxColor(47, 45, 61);
-	wxColor vaultButtonsColor = wxColor(36, 35, 47);
-	wxColor vaultButtonsOnHoverColor = wxColor(38,37,50);
-	//fonts
-	wxFont sidePanelButtonfont = wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD);
-
-
-	//SQL Quries
-	std::unique_ptr<sql::PreparedStatement>  insertCodeBlockpstmt = nullptr;
-	std::unique_ptr<sql::PreparedStatement>  insertSnippetTagpstmt = nullptr;
-	std::unique_ptr<sql::PreparedStatement>  retrieveTagidForTagpstmt = nullptr;
-	std::unique_ptr<sql::PreparedStatement>  retrievelanguageidForGivenName = nullptr;
 };
 
