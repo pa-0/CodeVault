@@ -25,6 +25,16 @@ set(SRCS App.cpp
 if(APPLE)
     add_executable(App MACOSX_BUNDLE ${SRCS})
     set_target_properties(App PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)
+else()
+    add_executable(App ${SRCS})
 endif()
+
+# Copy assets folder after build
+add_custom_command(
+    TARGET App
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/assets ${CMAKE_SOURCE_DIR}/build/assets
+)
 
 target_link_libraries(App PRIVATE wxcore wxnet)

@@ -9,10 +9,13 @@
 #include "CodeVaultDataStructs.h"
 
 
-MainFrame::MainFrame(const wxString& title) :wxFrame(nullptr,wxID_ANY,title) {
+MainFrame::MainFrame(const wxString& title, std::unique_ptr<MySQLConnectionManager> MySQLManager) :
+	wxFrame(nullptr, wxID_ANY, title), 
+	m_MySQLConnectionManager(std::move(MySQLManager)){
 
+
+	SetupSizer();
 	CreateControls();
-
 
 }
 
@@ -279,26 +282,32 @@ void MainFrame::SetupSidePanelUI()
 
 
 	
-
-	SetupSizer();
-
 }
 
-void MainFrame::SetupSizer(){
+void MainFrame::BindSidePanelButtonEvents(const std::vector<wxButton*>& sidePanelButtons)
+{
+	for (const auto& button : sidePanelButtons) {
 
 	
 
-	wxBoxSizer* primaryHorizontalSizer = new wxBoxSizer(wxHORIZONTAL);
-	wxBoxSizer* sideMenuVerticalSizer = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer* codeViewVerticalSizer = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer* codeSearchBarSizer= new wxBoxSizer(wxHORIZONTAL);
-	
-	sideMenuVerticalSizer->Add(closeSideBarBtn, wxSizerFlags().Left());
-	sideMenuVerticalSizer->Add(addSinppetBtn, wxSizerFlags().Left());
-	sideMenuVerticalSizer->Add(groupsBtn, wxSizerFlags().Left());
-	sideMenuVerticalSizer->Add(favoritesBtn, wxSizerFlags().Left());
-	sideMenuVerticalSizer->Add(logoutBtn, wxSizerFlags().Left());
+		// Capture the controlSet by value so that each lambda has its own copy
+		
+		button->Bind(wxEVT_LEAVE_WINDOW, [button,this](wxMouseEvent& event) mutable {
+			button->SetBackgroundColour(sidePanelColor); // Original color
+			button->Refresh();
+			event.Skip();
+			});
 
+		button->Bind(wxEVT_ENTER_WINDOW, [button, this](wxMouseEvent& event) mutable {
+			button->SetBackgroundColour(sidePanelButtonHoverColor); // Slightly darker on hover
+			button->Refresh();
+			event.Skip();
+			});
+
+
+
+
+	
 
 		button->SetForegroundColour(wxColour(255, 255, 255));
 	}
@@ -347,12 +356,6 @@ void MainFrame::SetVaultViewUI()
 
 	secondaryVaultSizer_V->Add(codeSearchBar, 0, wxEXPAND | wxLEFT | wxTOP | wxRIGHT, 20);
 	secondaryVaultSizer_V->Add(languageCompWrapper, 1, wxEXPAND | wxTOP, 20);
-
-
-
-	primaryHorizontalSizer->Add(sideMenuVerticalSizer, wxSizerFlags().Proportion(0).Expand());
-	primaryHorizontalSizer->Add(codeViewVerticalSizer, wxSizerFlags().Proportion(1).Expand());
-	codeSearchBarSizer->Add(codeSearchBar, wxSizerFlags().Proportion(1).Expand());
 
 
 	////defining size for Language Vaults
@@ -419,39 +422,251 @@ void MainFrame::SetVaultViewUI()
 	languageCompWrapper->Add(csharpVaultBtn, 0, wxALL, 10);
 	languageCompWrapper->Add(cplusplusVaultBtn, 0, wxALL, 10);
 
-	codeViewVerticalSizer->Add(codeSearchBarSizer,wxSizerFlags().Expand());
-
-
-	panel->SetSizer(primaryHorizontalSizer);
-	primaryHorizontalSizer->SetSizeHints(this);
 }
 
-void MainFrame::CreateControls()
+void MainFrame::SetSnippetFormUI()
 {
-	wxFont healineFont(wxFontInfo(wxSize(0, 36)).Bold());
-	wxFont mainFont(wxFontInfo(wxSize(0, 24)));
+
+	wxStaticText* snippetNameLabel = new wxStaticText(snippetFormPanel, wxID_ANY, "Snippet Name", wxDefaultPosition, wxDefaultSize ,wxALIGN_CENTER_HORIZONTAL );
+	snippetNameLabel->SetBackgroundColour(vaultViewColor);
+	snippetNameLabel->SetForegroundColour(*wxWHITE);
+	snippetNameLabel->SetFont(sidePanelButtonfont);
+
+	snippetNameInput = new wxTextCtrl(snippetFormPanel, wxID_ANY, "", wxDefaultPosition, wxSize(-1, 30), wxTE_PROCESS_ENTER );
+	snippetNameInput->SetBackgroundColour(vaultViewColor);
+	snippetNameInput->SetForegroundColour(*wxWHITE);
 
 
-	panel = new wxPanel(this);
-	panel->SetFont(mainFont);
+	wxStaticText* codeBlockLabel = new wxStaticText(snippetFormPanel, wxID_ANY, "Code Snippet", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
+	codeBlockLabel->SetBackgroundColour(vaultViewColor);
+	codeBlockLabel->SetForegroundColour(*wxWHITE);
+	codeBlockLabel->SetFont(sidePanelButtonfont);
 
-	codeSearchBar = new wxTextCtrl(panel, wxID_ANY,"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	codeBlockInput = new wxTextCtrl(snippetFormPanel, wxID_ANY, "", wxDefaultPosition, wxSize(-1, 360), wxTE_PROCESS_ENTER | wxTE_MULTILINE);
+	codeBlockInput->SetBackgroundColour(vaultViewColor);
+	codeBlockInput->SetForegroundColour(*wxWHITE);
+	codeBlockInput->SetFont(sidePanelButtonfont);
 
-	closeSideBarBtn = new wxButton(panel, wxID_ANY, "CloseSideBar");
-	addSinppetBtn = new wxButton(panel, wxID_ANY, "AddSnippet");
-	groupsBtn = new wxButton(panel, wxID_ANY, "Groups");
-	favoritesBtn = new wxButton(panel, wxID_ANY, "Favourites");
-	profileBtn = new wxButton(panel, wxID_ANY, "Profile");
-	logoutBtn = new wxButton(panel, wxID_ANY, "Logout");
+	wxStaticText* snippetDescLabel = new wxStaticText(snippetFormPanel, wxID_ANY, "Description", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
+	snippetDescLabel->SetBackgroundColour(vaultViewColor);
+	snippetDescLabel->SetForegroundColour(*wxWHITE);
+	snippetDescLabel->SetFont(sidePanelButtonfont);
+
+	snippetDescInput = new wxTextCtrl(snippetFormPanel, wxID_ANY, "", wxDefaultPosition, wxSize(-1, 150), wxTE_PROCESS_ENTER | wxTE_MULTILINE);
+	snippetDescInput->SetBackgroundColour(vaultViewColor);
+	snippetDescInput->SetForegroundColour(*wxWHITE);
+	snippetDescInput->SetFont(sidePanelButtonfont);
+
+	wxStaticText* TagsLabel = new wxStaticText(snippetFormPanel, wxID_ANY, "Tags :", wxDefaultPosition, wxDefaultSize,wxALIGN_LEFT);
+	TagsLabel->SetBackgroundColour(vaultViewColor);
+	TagsLabel->SetForegroundColour(*wxWHITE);
+	TagsLabel->SetFont(sidePanelButtonfont);
+
+	wxStaticText* LanguageLabel = new wxStaticText(snippetFormPanel, wxID_ANY, "Language", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
+	LanguageLabel->SetBackgroundColour(vaultViewColor);
+	LanguageLabel->SetForegroundColour(*wxWHITE);
+	LanguageLabel->SetFont(sidePanelButtonfont);
+
+	tagSelectionComboCtrl = new wxComboCtrl(snippetFormPanel, wxID_ANY, wxEmptyString,wxDefaultPosition,wxSize(-1,20), wxTE_PROCESS_ENTER);
+
+	wxListViewComboPopup* tagSelectpopupCtrl = new wxListViewComboPopup();
+
+
+	retrieveTagidForTagpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+		"SELECT tag_id FROM tags WHERE tag_name = ?"));
+
+	tagSelectionComboCtrl->Bind(wxEVT_TEXT_ENTER, [this,TagsLabel](wxCommandEvent& event) {
+
+		wxString val = tagSelectionComboCtrl->GetValue();
+		std::string stdString = std::string(val.mb_str());
+		try {
+			retrieveTagidForTagpstmt->setString(1, stdString);
+			std::unique_ptr<sql::ResultSet> res(retrieveTagidForTagpstmt->executeQuery());
+			if (res->next()) {  // Check if a result was returned
+				int tagId = res->getInt("tag_id");  // Retrieve tag_id as an int
+				std::cout <<"AddedTag: "<< stdString << " TagID:"<<tagId << std::endl;
+				addedTagsList.push_back(tagId);
+			}
+			else {
+				std::cout << "Tag 'OPENGL' not found." << std::endl;
+			}
+
+
+		}
+		catch (sql::SQLException& e) {
+			std::cerr << "SQL error: " << e.what() << std::endl;
+			return;
+		}
+
+		
+		std::cout << "Combo Control Pressed" << std::endl;
+		std::cout << val<< std::endl;
+		TagsLabel->SetLabelText(TagsLabel->GetLabelText() +", " + val);
+	});
+
+
+
+	// It is important to call SetPopupControl() as soon as possible
+	tagSelectionComboCtrl->SetPopupControl(tagSelectpopupCtrl);
+	tagSelectionComboCtrl->SetPopupMinWidth(100);
+
+	// Populate using wxListView methods
+
+
+	try {
+		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager.get()->createStatement());
+		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT tag_name,tag_id FROM tags"));
+
+		while (res->next()) {
+			std::string tag = res->getString("tag_name");
+			int tagId = res->getUInt("tag_id");
+			tagSelectpopupCtrl->InsertItem(tagSelectpopupCtrl->GetItemCount(),tag);
+			std::cout << tagId << std::endl;
+		
+		}
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQL error: " << e.what() << std::endl;
+		return;
+	}
+
+	//Populate language Container
+
+	try {
+		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager.get()->createStatement());
+		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT language_name FROM languages"));
+
+		while (res->next()) {
+			std::string language = res->getString("language_name");
+			languageList.Add(language);
+		}
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQL error: " << e.what() << std::endl;
+		return;
+	}
+
 	
+	languagesChoice = new wxChoice(snippetFormPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 30), languageList);
+
+
+	addCodeSnipBtn = new wxButton(snippetFormPanel, wxID_ANY,"Add Snippet", wxDefaultPosition, wxSize(-1,60));
+	addCodeSnipBtn->SetBackgroundColour(vaultViewColor);
+	addCodeSnipBtn->SetFont(sidePanelButtonfont);
+	addCodeSnipBtn->SetForegroundColour(*wxWHITE);
+
+
+
+	snippetNameSizer_H->Add(snippetNameLabel, 1, wxEXPAND |wxTOP , 5);
+	snippetNameSizer_H->Add(snippetNameInput, 3, wxEXPAND |wxRIGHT , 20);
+
+	codeBlockSizer_H->Add(codeBlockLabel, 1, wxEXPAND | wxTOP, 5);
+	codeBlockSizer_H->Add(codeBlockInput, 3, wxEXPAND | wxRIGHT, 20);
+
+	snippetDescSizer_H->Add(snippetDescLabel, 1, wxEXPAND | wxTOP, 5);
+	snippetDescSizer_H->Add(snippetDescInput, 3, wxEXPAND | wxRIGHT, 20);
+
+
+	tagsAndLanguageLabelsSizer_H->Add(TagsLabel, 1, wxEXPAND | wxTOP, 2);
+	tagsAndLanguageLabelsSizer_H->Add(LanguageLabel, 1, wxEXPAND | wxTOP, 3);
+
+
+	tagsandLanguageSizer_H->Add(tagSelectionComboCtrl, 1, wxEXPAND | wxTOP | wxLEFT |wxBOTTOM, 5);
+	tagsandLanguageSizer_H->Add(languagesChoice, 1, wxEXPAND | wxTOP |wxLEFT, 5);
+
+	snippetFormPanelSizer_V->Add(addCodeSnipBtn, 0, wxEXPAND | wxBOTTOM, 10);
+
+
+
+
+
+
+	 insertCodeBlockpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+			"INSERT INTO code_snippets(snippet_name, snippet_data,language_id,snippet_description) VALUES(?,?,?,?)"));
+
+	 insertSnippetTagpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+		 "INSERT INTO snippet_tags(snippet_id,tag_id) VALUES(?,?)"));
+
+	 addCodeSnipBtn->Bind(wxEVT_BUTTON, &MainFrame::OnAddSnippetSubmit, this);
+
+
+
 
 }
 
+void MainFrame::OnAddSnippetSubmit(wxCommandEvent& event)
+{
+
+	retrievelanguageidForGivenName = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+		"SELECT language_id FROM languages WHERE language_name = ?"));
+
+	wxString langval = languagesChoice->GetString(languagesChoice->GetSelection());
+	std::string stdlangval = std::string(langval.mb_str());
+	std::cout << stdlangval << std::endl;
+	int languageID = 0;
+
+	try
+	{
+		retrievelanguageidForGivenName->setString(1, stdlangval);
+		std::unique_ptr<sql::ResultSet> res(retrievelanguageidForGivenName->executeQuery());
+		if (res->next()) {
+			languageID = res->getInt("language_id");
+			std::cout << "Retrieved language_id Successfully" << std::endl;
+
+		}
+	}
+	catch (const std::exception&)
+	{
+
+	}
+
+	std::string stdSnippetName = std::string(snippetNameInput->GetValue().mb_str());
+	std::string stdSnippetData = std::string(codeBlockInput->GetValue().mb_str());
+	std::string stdSnippetDesc = std::string(snippetDescInput->GetValue().mb_str());
+
+
+
+
+	insertCodeBlockpstmt->setString(1, sql::SQLString(stdSnippetName));
+	insertCodeBlockpstmt->setString(2, sql::SQLString(stdSnippetData));
+	insertCodeBlockpstmt->setInt(3, languageID);
+	insertCodeBlockpstmt->setString(4, sql::SQLString(stdSnippetDesc));
+
+	insertCodeBlockpstmt->execute();
+	std::cout << "One row inserted to code_snippets." << std::endl;
+	int lastSnippetId = 0;
+
+	try {
+		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager.get()->createStatement());
+		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT snippet_id FROM code_snippets ORDER BY snippet_id DESC LIMIT 1"));
+
+		if (res->next()) {
+			lastSnippetId = res->getInt("snippet_id");
+			std::cout << "Last snippet_id: " << lastSnippetId << std::endl;
+		}
+		else {
+			std::cout << "No snippets found." << std::endl;
+		}
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQL error: " << e.what() << std::endl;
+		return;
+	}
+	std::cout << "size of the addedtags list" << addedTagsList.size() << std::endl;
+	for (int tagID : addedTagsList)
+	{
+		insertSnippetTagpstmt->setInt(1, lastSnippetId);
+		insertSnippetTagpstmt->setInt(2, tagID);
+		insertSnippetTagpstmt->execute();
+	}
+
+	std::cout << "Add Snippet Form Submit Clicked" << std::endl;
+	wxString snipNameVal = snippetNameInput->GetValue();
+	std::cout << snipNameVal << std::endl;
+}
 
 //void MainFrame::OnLanguageButtonClicked(wxCommandEvent& event, int wxID)
 //{
 //}
-
-
 
 
