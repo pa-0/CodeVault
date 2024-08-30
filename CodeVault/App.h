@@ -21,6 +21,8 @@ private:
     LoginFrame* m_loginFrame;
     MainFrame* m_mainFrame;
     SignUpFrame* m_signUpFrame;
+
+	std::unique_ptr<MySQLConnectionManager>	dbmanager;
 	const std::string m_server = "tcp://127.0.0.1:3306";
 	const std::string m_username = "root";
 	const std::string m_schema = "codevaultdb";

@@ -10,7 +10,9 @@ wxIMPLEMENT_APP(App);
 
 bool App::OnInit() {
 	RedirectstdoutToConsole(true);
-	std::unique_ptr<MySQLConnectionManager>	dbmanager;
+	
+
+	
 
 	if (!InitializeDatabaseManager(dbmanager)) {
 		return false; // Exit if the database initialization fails
@@ -20,7 +22,7 @@ bool App::OnInit() {
     m_loginFrame->SetClientSize(400, 300);
     m_loginFrame->Show();
 
-    m_mainFrame = new MainFrame("Code Vault",std::move(dbmanager));
+    m_mainFrame = new MainFrame("Code Vault",dbmanager.get());
     m_mainFrame->SetClientSize(1200, 800);
 	m_mainFrame->SetMinSize(wxSize(800,600));
 

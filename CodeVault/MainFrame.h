@@ -24,7 +24,7 @@ namespace sql {
 class MainFrame : public wxFrame
 {
 public:
-	MainFrame(const wxString& title, std::unique_ptr<MySQLConnectionManager> MySQLManager);
+	MainFrame(const wxString& title, MySQLConnectionManager*  MySQLManager);
 
 
 private:
@@ -46,10 +46,12 @@ private:
 	std::vector<wxButton*> sidePanelButtons;
 	std::vector<wxBitmapButton*> languageButtons;
 	wxArrayString languageList;
-	std::unique_ptr<MySQLConnectionManager>m_MySQLConnectionManager;
+	MySQLConnectionManager* m_MySQLConnectionManager;
 	std::vector<int> addedTagsList;
 	ProgrammingLanguage lang;
 	ProgrammingLanguage currentLangEnumVal;
+
+
 
 
 	//Panels

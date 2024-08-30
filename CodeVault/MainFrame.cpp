@@ -9,9 +9,9 @@
 #include "CodeVaultDataStructs.h"
 
 
-MainFrame::MainFrame(const wxString& title, std::unique_ptr<MySQLConnectionManager> MySQLManager) :
+MainFrame::MainFrame(const wxString& title, MySQLConnectionManager* MySQLManager) :
 	wxFrame(nullptr, wxID_ANY, title), 
-	m_MySQLConnectionManager(std::move(MySQLManager)){
+	m_MySQLConnectionManager(MySQLManager){
 
 
 	SetupSizer();
@@ -472,7 +472,7 @@ void MainFrame::SetSnippetFormUI()
 	wxListViewComboPopup* tagSelectpopupCtrl = new wxListViewComboPopup();
 
 
-	retrieveTagidForTagpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+	retrieveTagidForTagpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager->prepareStatement(
 		"SELECT tag_id FROM tags WHERE tag_name = ?"));
 
 	tagSelectionComboCtrl->Bind(wxEVT_TEXT_ENTER, [this,TagsLabel](wxCommandEvent& event) {
@@ -514,7 +514,7 @@ void MainFrame::SetSnippetFormUI()
 
 
 	try {
-		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager.get()->createStatement());
+		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager->createStatement());
 		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT tag_name,tag_id FROM tags"));
 
 		while (res->next()) {
@@ -533,7 +533,7 @@ void MainFrame::SetSnippetFormUI()
 	//Populate language Container
 
 	try {
-		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager.get()->createStatement());
+		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager->createStatement());
 		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT language_name FROM languages"));
 
 		while (res->next()) {
@@ -581,10 +581,10 @@ void MainFrame::SetSnippetFormUI()
 
 
 
-	 insertCodeBlockpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+	 insertCodeBlockpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager->prepareStatement(
 			"INSERT INTO code_snippets(snippet_name, snippet_data,language_id,snippet_description) VALUES(?,?,?,?)"));
 
-	 insertSnippetTagpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+	 insertSnippetTagpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager->prepareStatement(
 		 "INSERT INTO snippet_tags(snippet_id,tag_id) VALUES(?,?)"));
 
 	 addCodeSnipBtn->Bind(wxEVT_BUTTON, &MainFrame::OnAddSnippetSubmit, this);
@@ -597,7 +597,7 @@ void MainFrame::SetSnippetFormUI()
 void MainFrame::OnAddSnippetSubmit(wxCommandEvent& event)
 {
 
-	retrievelanguageidForGivenName = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager.get()->prepareStatement(
+	retrievelanguageidForGivenName = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager->prepareStatement(
 		"SELECT language_id FROM languages WHERE language_name = ?"));
 
 	wxString langval = languagesChoice->GetString(languagesChoice->GetSelection());
@@ -637,7 +637,7 @@ void MainFrame::OnAddSnippetSubmit(wxCommandEvent& event)
 	int lastSnippetId = 0;
 
 	try {
-		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager.get()->createStatement());
+		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager->createStatement());
 		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT snippet_id FROM code_snippets ORDER BY snippet_id DESC LIMIT 1"));
 
 		if (res->next()) {
