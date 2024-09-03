@@ -7,19 +7,27 @@
 #include "CVCustomControls.h"
 #include"MySQLConnectionManager.h"
 #include "CodeVaultDataStructs.h"
+#include "ServiceLayer/LanguageRepository.h"
+#include "Presenters/BasePresenter.h"
+#include "Presenters/PrimaryFramePresenter.h"
 
 
-MainFrame::MainFrame(const wxString& title, MySQLConnectionManager* MySQLManager) :
+MainFrame::MainFrame(const wxString& title, MySQLConnectionManager* MySQLManager, std::unique_ptr<BasePresenter>& presenterPtr) :
 	wxFrame(nullptr, wxID_ANY, title), 
-	m_MySQLConnectionManager(MySQLManager){
+	m_MySQLConnectionManager(MySQLManager),m_presenter(*presenterPtr), m_PrimaryFramePresenter(static_cast<PrimaryFramePresenter&>(*presenterPtr)){
 
 
+	m_PrimaryFramePresenter.SetControlledFrame(this);
+	
 	SetupSizer();
 	CreateControls();
 
 }
 
 void MainFrame::SetupSizer() {
+
+	
+	m_PrimaryFramePresenter.TestPrint();
 
 	wxFont healineFont(wxFontInfo(wxSize(0, 36)).Bold());
 	wxFont mainFont(wxFontInfo(wxSize(0, 24)));
@@ -204,7 +212,7 @@ void MainFrame::SetupSidePanelUI()
 	tagsScrollWindow->SetSizerAndFit(scrollViewsizer_V);
 	//tagsScrollWindow->SetVirtualSize(scrollViewsizer_V->GetSize());
 	scrollViewsizer_V->FitInside(tagsScrollWindow);
-	//scrollViewsizer_V->SetSizeHints(tagsScrollWindow);
+	//scrollViewsizer_V->SetSizeHints(tagsScrollWindow);K
 	
 	tagsSizer_V->Add(tagsScrollWindow, 1, wxEXPAND);
 	
@@ -469,7 +477,7 @@ void MainFrame::SetSnippetFormUI()
 
 	tagSelectionComboCtrl = new wxComboCtrl(snippetFormPanel, wxID_ANY, wxEmptyString,wxDefaultPosition,wxSize(-1,20), wxTE_PROCESS_ENTER);
 
-	wxListViewComboPopup* tagSelectpopupCtrl = new wxListViewComboPopup();
+	tagSelectpopupCtrl = new wxListViewComboPopup();
 
 
 	retrieveTagidForTagpstmt = std::unique_ptr<sql::PreparedStatement>(m_MySQLConnectionManager->prepareStatement(
@@ -513,38 +521,29 @@ void MainFrame::SetSnippetFormUI()
 	// Populate using wxListView methods
 
 
-	try {
-		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager->createStatement());
-		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT tag_name,tag_id FROM tags"));
+	//try {
+	//	std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager->createStatement());
+	//	std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT tag_name,tag_id FROM tags"));
 
-		while (res->next()) {
-			std::string tag = res->getString("tag_name");
-			int tagId = res->getUInt("tag_id");
-			tagSelectpopupCtrl->InsertItem(tagSelectpopupCtrl->GetItemCount(),tag);
-			std::cout << tagId << std::endl;
-		
-		}
-	}
-	catch (sql::SQLException& e) {
-		std::cerr << "SQL error: " << e.what() << std::endl;
-		return;
-	}
+	//	while (res->next()) {
+	//		std::string tag = res->getString("tag_name");
+	//		int tagId = res->getUInt("tag_id");
+	//		tagSelectpopupCtrl->InsertItem(tagSelectpopupCtrl->GetItemCount(),tag);
+	//		std::cout << tagId << std::endl;
+	//	
+	//	}
+	//}
+	//catch (sql::SQLException& e) {
+	//	std::cerr << "SQL error: " << e.what() << std::endl;
+	//	return;
+	//}
+
+	m_PrimaryFramePresenter.SetTagContainer();
 
 	//Populate language Container
+	
+	m_PrimaryFramePresenter.RetrieveAllLanguages();
 
-	try {
-		std::unique_ptr<sql::Statement> stmt(m_MySQLConnectionManager->createStatement());
-		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT language_name FROM languages"));
-
-		while (res->next()) {
-			std::string language = res->getString("language_name");
-			languageList.Add(language);
-		}
-	}
-	catch (sql::SQLException& e) {
-		std::cerr << "SQL error: " << e.what() << std::endl;
-		return;
-	}
 
 	
 	languagesChoice = new wxChoice(snippetFormPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 30), languageList);
@@ -669,4 +668,19 @@ void MainFrame::OnAddSnippetSubmit(wxCommandEvent& event)
 //{
 //}
 
+void MainFrame::SetLanguageChoice(wxArrayString Languages)
+{
+	if (&languageList != &Languages)
+	{
+		languageList = Languages; // Assignment should work
+	}
+	else {
+		std::cout<<"languageList and Languages are the same object"<<std::endl;
+	}
 
+}
+
+void MainFrame::InsertItemToTagsWindow(std::string tag)
+{
+	tagSelectpopupCtrl->InsertItem(tagSelectpopupCtrl->GetItemCount(), tag);
+}

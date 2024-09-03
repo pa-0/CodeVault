@@ -20,18 +20,33 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="Models\TagModel.h" />
+    <ClInclude Include="Presenters\BasePresenter.h" />
+    <ClInclude Include="Presenters\PrimaryFramePresenter.h" />
+    <ClInclude Include="ServiceLayer\LanguageRepository.h" />
+    <ClInclude Include="Models\LanguageModel.h" />
+    <ClInclude Include="ServiceLayer\CodeSnippetRepository.h" />
     <ClInclude Include="CodeVaultDataStructs.h" />
     <ClInclude Include="CVCustomControls.h" />
     <ClInclude Include="CVGradientPanel.h" />
     <ClInclude Include="loginFrame.h" />
     <ClInclude Include="MainFrame.h" />
+    <ClInclude Include="Models\CodeSnippetModel.h" />
+    <ClInclude Include="ServiceLayer\TagsRepository.h" />
     <ClInclude Include="SignUpFrame.h" />
+    <ClInclude Include="Utill\DBUtill.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Presenters\BasePresenter.cpp" />
+    <ClCompile Include="Presenters\PrimaryFramePresenter.cpp" />
+    <ClCompile Include="ServiceLayer\LanguageRepository.cpp" />
+    <ClCompile Include="MySQLConnectionManager.cpp" />
+    <ClCompile Include="ServiceLayer\CodeSnippetRepository.cpp" />
     <ClCompile Include="LoginFrame.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="MySQLConnectionManager.h" />
+    <ClCompile Include="ServiceLayer\TagsRepository.cpp" />
     <ClCompile Include="SignUpFrame.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -130,7 +145,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>STATIC_CONCPP;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\MySQL\mysql-connector-c++-9.0.0-debug\include\jdbc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\C++Projects\CodeVault\CodeVault\Presenters;D:\C++Projects\CodeVault\CodeVault\Models;C:\Program Files\MySQL\mysql-connector-c++-9.0.0-debug\include\jdbc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>

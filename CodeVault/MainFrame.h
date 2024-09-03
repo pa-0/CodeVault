@@ -15,6 +15,9 @@ class CVGradientPanel;
 class CVGradientTxtCtrl;
 class wxComboCtrl;
 class MySQLConnectionManager;
+class BasePresenter;
+class PrimaryFramePresenter;
+class wxListViewComboPopup;
 
 namespace sql {
 	class PreparedStatement;
@@ -24,10 +27,15 @@ namespace sql {
 class MainFrame : public wxFrame
 {
 public:
-	MainFrame(const wxString& title, MySQLConnectionManager*  MySQLManager);
+	MainFrame(const wxString& title, MySQLConnectionManager*  MySQLManager , std::unique_ptr<BasePresenter>& presenterPtr);
 
+
+	//UI Functions
+	void SetLanguageChoice(wxArrayString Languages);
+	void InsertItemToTagsWindow(std::string tag);
 
 private:
+	void SetPresenter();
 	void SetupSizer();
 	void CreateControls();
 	void SetupSidePanelUI();
@@ -42,7 +50,12 @@ private:
 	void OnLanguageButtonClicked(wxCommandEvent& event);
 
 
+
+
 	//Data Variables
+	BasePresenter& m_presenter;
+	PrimaryFramePresenter& m_PrimaryFramePresenter;
+
 	std::vector<wxButton*> sidePanelButtons;
 	std::vector<wxBitmapButton*> languageButtons;
 	wxArrayString languageList;
@@ -129,6 +142,7 @@ private:
 	wxTextCtrl* codeBlockInput;
 	wxTextCtrl* snippetDescInput;
 	wxComboCtrl* tagSelectionComboCtrl;
+	wxListViewComboPopup* tagSelectpopupCtrl;
 	wxChoice* languagesChoice;
 	wxButton* addCodeSnipBtn;
 
