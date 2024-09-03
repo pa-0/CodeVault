@@ -1,54 +1,113 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="MainFrame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CVGradientPanel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CVCustomControls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CodeVaultDataStructs.h">
-    <ClInclude Include="loginFrame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SignUpFrame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="MainFrame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginFrame.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrame.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="MySQLConnectionManager.h">
-      <Filter>Header Files</Filter>
-    <ClCompile Include="LoginFrame.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Header</Filter>
     </ClCompile>
     <ClCompile Include="SignUpFrame.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="ServiceLayer\CodeSnippetRepository.cpp">
+      <Filter>ServiceLayer\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="MySQLConnectionManager.cpp" />
+    <ClCompile Include="Presenters\BasePresenter.cpp">
+      <Filter>Presenters\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Presenters\PrimaryFramePresenter.cpp">
+      <Filter>Presenters\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ServiceLayer\LanguageRepository.cpp">
+      <Filter>ServiceLayer\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ServiceLayer\TagsRepository.cpp">
+      <Filter>ServiceLayer\Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="CodeVaultDataStructs.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="CVCustomControls.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="CVGradientPanel.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="loginFrame.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrame.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="SignUpFrame.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\CodeSnippetModel.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="ServiceLayer\CodeSnippetRepository.h">
+      <Filter>ServiceLayer\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Utill\DBUtill.h" />
+    <ClInclude Include="Presenters\BasePresenter.h">
+      <Filter>Presenters\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Presenters\PrimaryFramePresenter.h">
+      <Filter>Presenters\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\LanguageModel.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="ServiceLayer\LanguageRepository.h">
+      <Filter>ServiceLayer\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="ServiceLayer\TagsRepository.h">
+      <Filter>ServiceLayer\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\TagModel.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{4f179673-2366-47db-9cda-d1e0aab40392}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header">
+      <UniqueIdentifier>{dd0dff56-af43-420d-8a36-9445bfdaad75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{d5d4f12c-f4d4-4075-aec1-f1c7bffefb0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ServiceLayer">
+      <UniqueIdentifier>{565376e2-7146-4ad8-866b-9cfe1d206944}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ServiceLayer\Source">
+      <UniqueIdentifier>{5fe9a607-9317-468b-89a8-7792f3e116f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ServiceLayer\Header">
+      <UniqueIdentifier>{fad7e081-f731-4064-b205-d29848c109ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Presenters">
+      <UniqueIdentifier>{aa7042b4-44c5-4483-9c3d-0beddbc70e38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Presenters\Source">
+      <UniqueIdentifier>{42a68996-0b43-43c3-8350-87580e1d9621}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Presenters\Header">
+      <UniqueIdentifier>{03503456-a117-4aed-af04-a4730ccfee7d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

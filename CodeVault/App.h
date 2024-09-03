@@ -3,9 +3,10 @@
 #include "LoginFrame.h"
 #include "MainFrame.h"
 #include "SignUpFrame.h"
-#define APP_H
+
 
 class MySQLConnectionManager;
+class BasePresenter;
 
 class App : public wxApp
 {
@@ -16,15 +17,18 @@ public:;
 	void SetMainFrameVisibility(bool val);
 	void SetLoginFrameVisibility(bool val);
 	void SetSignupFrameVisibility(bool val);
+	void InitDB();
+	
 private:
-	bool InitializeDatabaseManager(std::unique_ptr<MySQLConnectionManager>& dbManager);
+	//Frames
     LoginFrame* m_loginFrame;
     MainFrame* m_mainFrame;
     SignUpFrame* m_signUpFrame;
 
-	std::unique_ptr<MySQLConnectionManager>	dbmanager;
-	const std::string m_server = "tcp://127.0.0.1:3306";
-	const std::string m_username = "root";
+	//Presenters
+	std::unique_ptr<BasePresenter> MainFramePresenter;
+
+	MySQLConnectionManager*	dbManager;
 	const std::string m_schema = "codevaultdb";
 };
 
